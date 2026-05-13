@@ -2,20 +2,22 @@
 	.text
 	.globl	multstore
 	.type	multstore, @function
+
+// void multstore(long x, long y, long *dest)
+// x in %rdi, y in %rsi, dest in %rdx
 multstore:
 .LFB0:
 	.cfi_startproc
 	endbr64
-	pushq	%rbx		// push the contents of register %rbs
-				// onto the program stack
+	pushq	%rbx		// Save %rbx
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
-	movq	%rdx, %rbx
-	call	mult2@PLT
-	movq	%rax, (%rbx)
-	popq	%rbx
+	movq	%rdx, %rbx	// Copy dest to %rbx
+	call	mult2@PLT	// Call mult2(x, y)
+	movq	%rax, (%rbx)	// Store result at *dest
+	popq	%rbx		// Restore %rbx
 	.cfi_def_cfa_offset 8
-	ret
+	ret			// Return
 	.cfi_endproc
 .LFE0:
 	.size	multstore, .-multstore
